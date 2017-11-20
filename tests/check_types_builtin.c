@@ -795,21 +795,26 @@ START_TEST(UA_Int64_encodeNegativeShallEncodeLittleEndian) {
 END_TEST
 
 START_TEST(UA_Float_encodeShallWorkOnExample) {
-#define UA_FLOAT_TESTS 9
+#define UA_FLOAT_TESTS 10
     /* use -NAN since the UA standard expected specific values for NAN with the
        negative bit set */
-    UA_Float src[UA_FLOAT_TESTS] = {27.5f, -6.5f, 0.0f, -0.0f, -NAN, FLT_MAX, FLT_MIN, INFINITY, -INFINITY};
+    UA_Float src[UA_FLOAT_TESTS] = {27.5f, -6.5f, 0.0f, -0.0f, NAN, -NAN, FLT_MAX, FLT_MIN, INFINITY, -INFINITY};
     UA_Byte result[UA_FLOAT_TESTS][4] = {
         {0x00, 0x00, 0xDC, 0x41}, // 27.5
         {0x00, 0x00, 0xD0, 0xC0}, // -6.5
         {0x00, 0x00, 0x00, 0x00}, // 0.0
         {0x00, 0x00, 0x00, 0x80}, // -0.0
-        {0x00, 0x00, 0xC0, 0xFF}, // NAN
+		{0x00, 0x00, 0xC0, 0xFF}, // NAN
+        {0x00, 0x00, 0xC0, 0xFF}, // -NAN
         {0xFF, 0xFF, 0x7F, 0x7F}, // FLT_MAX
         {0x00, 0x00, 0x80, 0x00}, // FLT_MIN
         {0x00, 0x00, 0x80, 0x7F}, // INF
         {0x00, 0x00, 0x80, 0xFF} // -INF
     };
+#ifdef _WIN32
+	// on WIN32 -NAN is encoded differently
+	result[5][3] = 127;
+#endif
 
     UA_Byte data[] = {0x55, 0x55, 0x55,  0x55};
     UA_ByteString dst = {4, data};
