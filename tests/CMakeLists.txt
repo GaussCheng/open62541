@@ -21,7 +21,10 @@ if(UA_ENABLE_VALGRIND_UNIT_TESTS)
     find_package(Valgrind REQUIRED)
 endif()
 
-set(LIBS subunit ${CHECK_LIBRARIES} ${open62541_LIBRARIES})
+set(LIBS ${CHECK_LIBRARIES} ${open62541_LIBRARIES})
+if(NOT MSVC)
+    LIST(APPEND LIBS subunit)
+endif()
 
 # Use different plugins for testing
 set(test_plugin_sources ${PROJECT_SOURCE_DIR}/plugins/ua_network_tcp.c

@@ -242,7 +242,7 @@ setSrv(UA_Server *server, const struct resource *r,
 
     // todo: malloc may fail: return a statuscode
     char *newUrl = (char*)UA_malloc(10 + srvNameLen + 8);
-    sprintf(newUrl, "opc.tcp://%.*s:%d/", (int) srvNameLen,
+    snprintf(newUrl, 10 + srvNameLen + 8, "opc.tcp://%.*s:%d/", (int) srvNameLen,
             r->known.srv.name, r->known.srv.port);
     UA_LOG_INFO(server->config.logger, UA_LOGCATEGORY_SERVER,
                 "Multicast DNS: found server: %s", newUrl);
@@ -349,7 +349,7 @@ void mdns_create_txt(UA_Server *server, const char *fullServiceDomain, const cha
         caps = (char*)UA_malloc(sizeof(char) * capsLen);
         size_t idx = 0;
         for (size_t i = 0; i < *capabilitiesSize; i++) {
-            strncpy(caps + idx, (const char *) capabilites[i].data, capabilites[i].length);
+            memcpy(caps + idx, (const char *) capabilites[i].data, capabilites[i].length);
             idx += capabilites[i].length + 1;
             caps[idx - 1] = ',';
         }

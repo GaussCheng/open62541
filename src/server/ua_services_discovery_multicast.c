@@ -40,7 +40,7 @@
 # define errno__ errno
 #endif
 
-#ifdef __WIN32
+#if defined(__WIN32) || defined(WIN32)
 #define UA_LOG_ERROR_SOCKET(LOGGER, CATEGORY, DESCRIPTION) { \
     char *s = NULL; \
     FormatMessage(FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS, \
